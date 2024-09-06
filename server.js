@@ -37,9 +37,10 @@ app.post('/api/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ email, password: hashedPassword });
     await newUser.save();
-    res.json({ message: 'User registered successfully!' });
+    res.status(201).json({ message: 'User registered successfully!' });
   } catch (error) {
-    res.status(400).json({ message: 'Registration failed' });
+    console.error('Registration error:', error);
+    res.status(400).json({ message: 'Registration failed', error });
   }
 });
 
@@ -56,7 +57,8 @@ app.post('/api/login', async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ message: 'Login successful', token });
   } catch (error) {
-    res.status(500).json({ message: 'An error occurred' });
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'An error occurred', error });
   }
 });
 
